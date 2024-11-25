@@ -11,7 +11,7 @@ async function getAuthToken(serverUrl, appKey, appSecret) {
     appKey: appKey,
     appSecret: appSecret
   });
-  return response.data.tokenId;
+  return response.tokenId;
 }
 
 async function getVaultId(serverUrl, token, vaultName) {
