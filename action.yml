@@ -1,0 +1,25 @@
+name: 'Devolutions Server Get SecretEntry'
+description: 'Authenticate and get a secret entry from Devolutions Server'
+inputs:
+  server_url:
+    description: 'URL of the Devolutions Server'
+    required: true
+  app_key:
+    description: 'Application key for authentication'
+    required: true
+  app_secret:
+    description: 'Application secret for authentication'
+    required: true
+  vault_name:
+    description: 'Name of the vault containing the password'
+    required: true
+  entry_name:
+    description: 'Name of the password entry to retrieve'
+    required: true
+  output_variable:
+    description: 'Name of the environment variable to store the retrieved password'
+    required: false
+    default: 'DVLS_ENTRY_SECRET'
+runs:
+  using: 'node20'
+  main: 'index.js'
