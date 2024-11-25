@@ -67,7 +67,6 @@ async function run() {
     const entryId = await makeRequest('Get Entry ID', () => 
       getEntryId(serverUrl, token, vaultId, entryName)
     );
-    throw new Error(entryId);
     
     const password = await makeRequest('Get Password', () => 
       getPassword(serverUrl, token, vaultId, entryId)
