@@ -38,6 +38,14 @@ async function getPassword(serverUrl, token, vaultId, entryId) {
   return response.data.data.password;
 }
 
+async function makeRequest(description, requestFn) {
+  try {
+    return await requestFn();
+  } catch (error) {
+    throw new Error(`${description} failed: ${error.message} (Status: ${error.response?.status})`);
+  }
+}
+
 async function run() {
   try {
     const serverUrl = core.getInput('server_url');
@@ -47,12 +55,22 @@ async function run() {
     const entryName = core.getInput('entry_name');
     const outputVariable = core.getInput('output_variable');
 
-    const token = await getAuthToken(serverUrl, appKey, appSecret);
-    const vaultId = await getVaultId(serverUrl, token, vaultName);
+    const token = await makeRequest('Authentication', () => 
+      getAuthToken(serverUrl, appKey, appSecret)
+    );
+    
+    const vaultId = await makeRequest('Get Vault ID', () => 
+      getVaultId(serverUrl, token, vaultName)
+    );
     if (!vaultId) throw new Error('Vault not found');
     
-    const entryId = await getEntryId(serverUrl, token, vaultId, entryName);
-    const password = await getPassword(serverUrl, token, vaultId, entryId);
+    const entryId = await makeRequest('Get Entry ID', () => 
+      getEntryId(serverUrl, token, vaultId, entryName)
+    );
+    
+    const password = await makeRequest('Get Password', () => 
+      getPassword(serverUrl, token, vaultId, entryId)
+    );
 
     core.setSecret(password);
     core.exportVariable(outputVariable, password);
