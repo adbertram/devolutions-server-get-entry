@@ -27,7 +27,7 @@ async function getEntryId(serverUrl, token, vaultId, entryName) {
     headers: { tokenId: token },
     params: { name: entryName }
   });
-  return response.data.data.id;
+  return response.data.id;
 }
 
 async function getPassword(serverUrl, token, vaultId, entryId) {
@@ -35,7 +35,7 @@ async function getPassword(serverUrl, token, vaultId, entryId) {
     headers: { tokenId: token },
     params: { includeSensitiveData: true }
   });
-  return response.data.data.password;
+  return response.data.password;
 }
 
 async function makeRequest(description, requestFn) {
