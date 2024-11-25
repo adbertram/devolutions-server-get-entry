@@ -1,39 +1,39 @@
 const core = require('@actions/core');
 const axios = require('axios');
+const https = require('https');
+
+const axiosInstance = axios.create({
+  httpsAgent: new https.Agent({ rejectUnauthorized: false })
+});
 
 async function getAuthToken(serverUrl, appKey, appSecret) {
-  const response = await axios.post(`${serverUrl}/api/v1/login`, {
+  const response = await axiosInstance.post(`${serverUrl}/api/v1/login`, {
     appKey: appKey,
     appSecret: appSecret
-  }, {
-    httpsAgent: new https.Agent({ rejectUnauthorized: false })
   });
   return response.data.tokenId;
 }
 
 async function getVaultId(serverUrl, token, vaultName) {
-  const response = await axios.get(`${serverUrl}/api/v1/vault`, {
-    headers: { tokenId: token },
-    httpsAgent: new https.Agent({ rejectUnauthorized: false })
+  const response = await axiosInstance.get(`${serverUrl}/api/v1/vault`, {
+    headers: { tokenId: token }
   });
   const vault = response.data.data.find(v => v.name === vaultName);
   return vault ? vault.id : null;
 }
 
 async function getEntryId(serverUrl, token, vaultId, entryName) {
-  const response = await axios.get(`${serverUrl}/api/v1/vault/${vaultId}/entry`, {
+  const response = await axiosInstance.get(`${serverUrl}/api/v1/vault/${vaultId}/entry`, {
     headers: { tokenId: token },
-    params: { name: entryName },
-    httpsAgent: new https.Agent({ rejectUnauthorized: false })
+    params: { name: entryName }
   });
   return response.data.data.id;
 }
 
 async function getPassword(serverUrl, token, vaultId, entryId) {
-  const response = await axios.get(`${serverUrl}/api/v1/vault/${vaultId}/entry/${entryId}`, {
+  const response = await axiosInstance.get(`${serverUrl}/api/v1/vault/${vaultId}/entry/${entryId}`, {
     headers: { tokenId: token },
-    params: { includeSensitiveData: true },
-    httpsAgent: new https.Agent({ rejectUnauthorized: false })
+    params: { includeSensitiveData: true }
   });
   return response.data.data.password;
 }
