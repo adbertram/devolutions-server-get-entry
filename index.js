@@ -38,6 +38,12 @@ async function getEntryId(serverUrl, token, vaultId, entryName) {
     headers: { tokenId: token },
     params: { name: entryName }
   });
+  
+  if (!response.data.data || !response.data.data.id) {
+    core.debug('No entry found with the specified name');
+    throw new Error(`Entry '${entryName}' not found in vault`);
+  }
+
   core.debug(`Found entry ID: ${response.data.data.id}`);
   return response.data.data.id;
 }
