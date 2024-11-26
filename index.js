@@ -43,7 +43,7 @@ async function getEntryId(serverUrl, token, vaultId, entryName) {
     }
   );
   
-  if (!response.data.data) {
+  if (!response.data.data.id) {
     core.debug('Response data:');
     core.debug(JSON.stringify(response.data, null, 2));
     throw new Error(`Entry '${entryName}' not found`);
