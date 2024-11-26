@@ -34,26 +34,35 @@ async function getVaultId(serverUrl, token, vaultName) {
 
 async function getEntryId(serverUrl, token, vaultId, entryName) {
   core.debug(`Attempting to get entry ID for entry: ${entryName} in vault: ${vaultId}`);
-  const response = await axiosInstance.get(`${serverUrl}/api/v1/vault/${vaultId}/entry`, {
-    headers: { tokenId: token },
-    params: { name: entryName }
-  });
+  const response = await axiosInstance.get(
+    `${serverUrl}/api/v1/vault/${vaultId}/entry`, 
+    {
+      headers: { tokenId: token },
+      data: { name: entryName },
+      params: { name: entryName }
+    }
+  );
   
-  if (!response.data.data || !response.data.data.id) {
-    core.debug('No entry found with the specified name');
-    throw new Error(`Entry '${entryName}' not found in vault`);
+  if (!response.data.data) {
+    core.debug('Response data:');
+    core.debug(JSON.stringify(response.data, null, 2));
+    throw new Error(`Entry '${entryName}' not found`);
   }
-
+  
   core.debug(`Found entry ID: ${response.data.data.id}`);
   return response.data.data.id;
 }
 
 async function getPassword(serverUrl, token, vaultId, entryId) {
   core.debug(`Attempting to get password for entry: ${entryId} in vault: ${vaultId}`);
-  const response = await axiosInstance.get(`${serverUrl}/api/v1/vault/${vaultId}/entry/${entryId}`, {
-    headers: { tokenId: token },
-    params: { includeSensitiveData: true }
-  });
+  const response = await axiosInstance.get(
+    `${serverUrl}/api/v1/vault/${vaultId}/entry/${entryId}`,
+    {
+      headers: { tokenId: token },
+      data: { includeSensitiveData: true },
+      params: { includeSensitiveData: true }
+    }
+  );
   core.debug('Successfully retrieved password');
   return response.data.data.password;
 }
@@ -73,7 +82,9 @@ async function makeRequest(description, requestFn) {
       data: error.response?.data,
       headers: error.response?.headers,
       url: error.config?.url,
-      method: error.config?.method
+      method: error.config?.method,
+      requestData: error.config?.data,
+      queryParams: error.config?.params
     }, null, 2));
 
     const apiMessage = error.response?.data?.message;
