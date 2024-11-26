@@ -42,6 +42,15 @@ async function makeRequest(description, requestFn) {
   try {
     return await requestFn();
   } catch (error) {
+    const apiMessage = error.response?.data?.message;
+    throw new Error(`${description} failed: ${apiMessage || error.message} (Status: ${error.response?.status})`);
+  }
+}
+
+async function makeRequest(description, requestFn) {
+  try {
+    return await requestFn();
+  } catch (error) {
     throw new Error(`${description} failed: ${error.message} (Status: ${error.response?.status})`);
   }
 }
