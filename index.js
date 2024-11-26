@@ -43,14 +43,15 @@ async function getEntryId(serverUrl, token, vaultId, entryName) {
     }
   );
   
-  if (!response.data.data.id) {
+  const entryId = response.data.data[0].id;
+  if (!entryId) {
     core.debug('Response data:');
     core.debug(JSON.stringify(response.data, null, 2));
     throw new Error(`Entry '${entryName}' not found`);
   }
   
-  core.debug(`Found entry ID: ${response.data.data.id}`);
-  return response.data.data.id;
+  core.debug(`Found entry ID: ${entryId}`);
+  return entryId;
 }
 
 async function getPassword(serverUrl, token, vaultId, entryId) {
